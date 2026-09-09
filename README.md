@@ -1,5 +1,10 @@
 # 2026-09-09 | Bootiful Spring Security @ KCDC
 
+## links of note
+
+* https://github.com/joshlong-attic/2026-03-05-devnexus-bootiful-spring-security
+* https://github.com/coffee-software-show/2026-08-18-bootiful-native-javafx
+
 
 ## part 1
 * start.spring.io
