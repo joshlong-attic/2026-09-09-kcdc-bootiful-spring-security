@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.client_grpc";
+option java_outer_classname = "Messages";
+
+message MessageRequest {
+  string name = 1 ;
+}
+
+message MessageResponse {
+  string message = 1 ;
+}
+
+service MessageService {
+  rpc Message (MessageRequest) returns (MessageResponse) {}
+}
