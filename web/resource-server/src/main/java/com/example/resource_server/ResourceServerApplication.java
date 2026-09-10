@@ -12,9 +12,9 @@ import java.util.Map;
 @SpringBootApplication
 public class ResourceServerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ResourceServerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ResourceServerApplication.class, args);
+    }
 
 }
 
@@ -22,9 +22,9 @@ public class ResourceServerApplication {
 @ResponseBody
 class MessageController {
 
-	@GetMapping("/")
-	Map<String, String> me(Principal principal) {
-		return Map.of("name", principal.getName());
-	}
+    @GetMapping("/message")
+    Map<String, String> message(Principal principal) {
+        return Map.of("message", "hello, " + principal.getName() + "!");
+    }
 
 }
