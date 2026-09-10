@@ -19,64 +19,64 @@ import java.util.Objects;
 @SpringBootApplication
 public class CliApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CliApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(CliApplication.class, args);
+    }
 
 }
 
 @Component
 class Granter {
 
-	private final RestClient http;
-	private final ClientRegistration registration;
+    private final RestClient http;
+    private final ClientRegistration registration;
 
-	Granter(
-			InMemoryClientRegistrationRepository repository,
-			RestClient.Builder http) {
-		this.registration = repository.findByRegistrationId("messages");
-		this.http = http
-				.defaultHeaders(headers -> {
-					headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-					headers.setBasicAuth(this.registration.getClientId(), this.registration.getClientSecret());
-				})
-				.build();
-	}
+    Granter(
+            InMemoryClientRegistrationRepository repository,
+            RestClient.Builder http) {
+        this.registration = repository.findByRegistrationId("messages");
+        this.http = http
+                .defaultHeaders(headers -> {
+                    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+                    headers.setBasicAuth(this.registration.getClientId(), this.registration.getClientSecret());
+                })
+                .build();
+    }
 
-	Grant grant() throws Exception {
-		var json = this.http
-				.post()
-				.uri(this.registration.getProviderDetails().getConfigurationMetadata()
-						.get("device_authorization_endpoint") + "")
-				.body(MultiValueMap.fromSingleValue(
-						Map.of("scope", String.join(" ", this.registration.getScopes()),
-								"client_id", this.registration.getClientId())
-				))
-				.retrieve()
-				.body(Map .class);
-		var uri = json.get("verification_uri_complete") + "";
-		var deviceCode = json.get("device_code") + "" ;
-		IO.println("please go to " + uri);
-		while (true) {
-			try {
-				Thread.sleep(Duration.ofSeconds(5));
-				return new Grant(uri, this.token(deviceCode));
-			} catch (Throwable throwable) {
-				// meh
-			}
-		}
-	}
+    Grant grant() throws Exception {
+        var json = this.http
+                .post()
+                .uri(this.registration.getProviderDetails().getConfigurationMetadata()
+                        .get("device_authorization_endpoint") + "")
+                .body(MultiValueMap.fromSingleValue(
+                        Map.of("scope", String.join(" ", this.registration.getScopes()),
+                                "client_id", this.registration.getClientId())
+                ))
+                .retrieve()
+                .body(Map.class);
+        var uri = json.get("verification_uri_complete") + "";
+        var deviceCode = json.get("device_code") + "";
+        IO.println("please go to " + uri);
+        while (true) {
+            try {
+                Thread.sleep(Duration.ofSeconds(5));
+                return new Grant(uri, this.token(deviceCode));
+            } catch (Throwable throwable) {
+                // meh
+            }
+        }
+    }
 
-	private String token(String deviceCode) {
-		var tokenJson = http.post()
-				.uri(this.registration.getProviderDetails().getTokenUri())
-				.body(MultiValueMap.fromSingleValue(Map.of(
-						"client_id", this.registration.getClientId(), "device_code", deviceCode,
-						"grant_type", AuthorizationGrantType.DEVICE_CODE.getValue())))
-				.retrieve()
-				.body(JsonNode.class);
-		return tokenJson.get("access_token").asString();
-	}
+    private String token(String deviceCode) {
+        var tokenJson = http.post()
+                .uri(this.registration.getProviderDetails().getTokenUri())
+                .body(MultiValueMap.fromSingleValue(Map.of(
+                        "client_id", this.registration.getClientId(), "device_code", deviceCode,
+                        "grant_type", AuthorizationGrantType.DEVICE_CODE.getValue())))
+                .retrieve()
+                .body(JsonNode.class);
+        return tokenJson.get("access_token").asString();
+    }
 }
 
 record Grant(String verificationUri, String accessToken) {
@@ -85,28 +85,26 @@ record Grant(String verificationUri, String accessToken) {
 @Component
 class ShellClientComponent {
 
-	private final RestClient http;
-	private final Granter granter;
+    private final RestClient http;
+    private final Granter granter;
 
-	ShellClientComponent(RestClient.Builder http, Granter granter) {
-		this.http = http.build();
-		this.granter = granter;
-	}
+    ShellClientComponent(RestClient.Builder http, Granter granter) {
+        this.http = http.build();
+        this.granter = granter;
+    }
 
-	@Command(description = "get a secured message")
-	String message() throws Exception {
-		var at = this.granter.grant().accessToken();
-		var name = Objects.requireNonNull(this.http
-						.get()
-						.uri("http://localhost:8081/message")
-						.headers(h -> h.setBearerAuth(at))
-						.retrieve()
-						.body(User.class))
-				.name();
-		IO.println("the name is " +name);
-		return name;
-	}
+    @Command(description = "get a secured message")
+    String message() throws Exception {
+        var at = this.granter.grant().accessToken();
+        return Objects.requireNonNull(this.http
+                        .get()
+                        .uri("http://localhost:8081/message")
+                        .headers(h -> h.setBearerAuth(at))
+                        .retrieve()
+                        .body(Message.class))
+                .message();
+    }
 
-	record User(String name) {
-	}
+    record Message(String message) {
+    }
 }

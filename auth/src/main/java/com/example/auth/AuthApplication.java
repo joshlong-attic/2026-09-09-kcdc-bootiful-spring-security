@@ -53,8 +53,14 @@ class SecurityConfiguration {
     @Bean
     Customizer<HttpSecurity> authServerConfiguration() {
         return security -> security
-                .oauth2AuthorizationServer(a -> a.oidc(Customizer.withDefaults()));
+                .oauth2AuthorizationServer(a -> a
+                        .oidc(Customizer.withDefaults())
+                        // NOTE: required for Shell
+                        .deviceAuthorizationEndpoint(Customizer.withDefaults())
+                        .deviceVerificationEndpoint(Customizer.withDefaults())
+                );
     }
+
 
     // @Bean
     Customizer<HttpSecurity> securityCustomizer() {
@@ -81,6 +87,17 @@ class SecurityConfiguration {
                                     .getTokenValue());
                         }));
     }
+}
+
+@Controller
+@ResponseBody
+class DeviceActivatedController {
+
+    @GetMapping("/")
+    String home() {
+        return "You're all set. Go back to your terminal.";
+    }
+
 }
 
 //
