@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
+// the one and only endpoint this app serves. A desktop app has no https://... to be redirected
+// to, so it listens on the loopback address instead (RFC 8252), and the embedded web server is
+// there for exactly this one request.
 @Controller
 class AuthorizationCodeRedirectController {
 

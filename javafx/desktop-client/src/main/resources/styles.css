@@ -11,11 +11,6 @@
     -fx-font-weight: bold;
 }
 
-.subtle {
-    -fx-font-size: 12px;
-    -fx-text-fill: #9ca3af;
-}
-
 .button {
     -fx-background-color: #6db33f;
     -fx-text-fill: white;
