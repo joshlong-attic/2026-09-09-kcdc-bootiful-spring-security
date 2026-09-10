@@ -24,7 +24,6 @@ import org.springframework.web.service.annotation.GetExchange;
 
 import java.time.Instant;
 import java.util.Map;
-import java.util.UUID;
 
 @SpringBootApplication
 public class AmqpOauthClientApplication {

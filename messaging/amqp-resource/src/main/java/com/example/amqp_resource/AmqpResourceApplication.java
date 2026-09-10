@@ -40,9 +40,9 @@ public class AmqpResourceApplication {
 
     @Bean
     DirectChannelSpec requests(JwtAuthenticationProvider jwtAuthenticationProvider) {
-        var jwtAuthInterceptor = new JwtAuthenticationInterceptor("messages-token", jwtAuthenticationProvider);
-        var securityContextChannelInterceptor = new SecurityContextChannelInterceptor(
-                "messages-token");
+        var headerName = "messages-token";
+        var jwtAuthInterceptor = new JwtAuthenticationInterceptor(headerName, jwtAuthenticationProvider);
+        var securityContextChannelInterceptor = new SecurityContextChannelInterceptor(headerName);
         var authorizationChannelInterceptor = new AuthorizationChannelInterceptor(
                 AuthenticatedAuthorizationManager.authenticated());
         return MessageChannels
