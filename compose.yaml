@@ -1,5 +1,16 @@
 services:
 
+  pgvector:
+    image: 'pgvector/pgvector:pg16'
+    environment:
+      - 'POSTGRES_DB=mydatabase'
+      - 'POSTGRES_PASSWORD=secret'
+      - 'POSTGRES_USER=myuser'
+    labels:
+      - "org.springframework.boot.service-connection=postgres"
+    ports:
+      - '5432:5432'
+
   rabbitmq:
     image: 'rabbitmq:latest'
     environment:
@@ -7,12 +18,3 @@ services:
       - 'RABBITMQ_DEFAULT_USER=myuser'
     ports:
       - '5672:5672'
-
-  postgres:
-    image: 'postgres:latest'
-    environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
-    ports:
-      - '5432'

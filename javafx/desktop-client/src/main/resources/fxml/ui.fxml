@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="12.0" prefWidth="620.0" prefHeight="480.0"
+      stylesheets="@/styles.css" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml">
+    <padding>
+        <Insets top="32.0" right="32.0" bottom="32.0" left="32.0" />
+    </padding>
+    <children>
+        <Label fx:id="greeting" text="Hello, stranger." styleClass="greeting" />
+        <HBox alignment="CENTER" spacing="12.0">
+            <children>
+                <Button fx:id="signIn" defaultButton="true" text="Sign in with your browser" />
+                <Button fx:id="call" disable="true" text="Call the API" />
+            </children>
+        </HBox>
+        <TextArea fx:id="output" editable="false" prefRowCount="10" wrapText="true" />
+    </children>
+</VBox>
