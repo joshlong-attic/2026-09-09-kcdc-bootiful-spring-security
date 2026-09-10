@@ -20,7 +20,7 @@ import org.springframework.security.oauth2.client.web.client.support.OAuth2RestC
 import org.springframework.web.client.RestClient;
 import org.springframework.web.service.registry.ImportHttpServices;
 
-@ImportHttpServices({UserinfoClient.class, MessageClient.class})
+@ImportHttpServices( MessageClient.class )
 @SpringBootApplication(exclude = {ServletWebSecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class,
         UserDetailsServiceAutoConfiguration.class, OAuth2ClientWebSecurityAutoConfiguration.class})
 public class DesktopApplication {
