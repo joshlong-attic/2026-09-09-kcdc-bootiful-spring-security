@@ -85,7 +85,7 @@ class SecurityConfiguration {
         return u;
     }
 
-    @Bean
+   // @Bean
     OAuth2TokenCustomizer<JwtEncodingContext> jwtEncodingContextOAuth2TokenCustomizer() {
         return context -> {
             var isAdmin = context.getPrincipal().getAuthorities()
