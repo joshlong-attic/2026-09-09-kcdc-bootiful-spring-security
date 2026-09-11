@@ -9,6 +9,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.servlet.function.RequestPredicates;
@@ -46,6 +47,11 @@ public class GatewayApplication {
     }
 
     @Bean
+    Customizer<HttpSecurity> httpSecurityCustomizer() {
+        return http -> http.csrf(AbstractHttpConfigurer::disable);
+    }
+
+  /*  @Bean
     Customizer<HttpSecurity> httpSecurityCustomizer() throws Exception {
         return http -> {
             var csrfHandler = new CsrfTokenRequestAttributeHandler();
@@ -54,6 +60,8 @@ public class GatewayApplication {
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .csrfTokenRequestHandler(csrfHandler));
         };
-    }
+       }
+    */
+
 
 }
