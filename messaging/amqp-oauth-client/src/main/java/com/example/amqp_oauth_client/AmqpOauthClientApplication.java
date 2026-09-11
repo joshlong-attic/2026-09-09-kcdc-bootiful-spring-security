@@ -1,7 +1,10 @@
 package com.example.amqp_oauth_client;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.amqp.core.*;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -83,6 +86,17 @@ class ProducerConfiguration {
     }
 
 
+    @Bean
+    InitializingBean applicationRunner (Binding binding , 
+                                       Exchange e, Queue queue, AmqpAdmin amqpAdmin) {
+        return new InitializingBean() {
+            @Override
+            public void afterPropertiesSet() throws Exception {
+                amqpAdmin.declareBinding(binding);
+            }
+        } ;
+    }
+    
     @Bean
     Queue messagesQueue() {
         return QueueBuilder.durable(MESSAGES).build();

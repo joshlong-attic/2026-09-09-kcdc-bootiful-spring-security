@@ -49,14 +49,14 @@ class TenantOAuth2TokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingCo
                 .params(context.getPrincipal().getName())
                 .query((rs, rowNum) -> rs.getString("tenant_details_identifier"))
                 .single();
-        IO.println("the tenant is "  + tenant);
+        IO.println("the tenant is " + tenant);
         context.getClaims().claim("tenant_id", tenant);
     }
 }
 
 @Configuration
 class MultitenancyConfiguration {
-    
+
     @Bean
     TenantOAuth2TokenCustomizer tenantOAuth2TokenCustomizer(JdbcClient jdbcClient) {
         return new TenantOAuth2TokenCustomizer(jdbcClient);
@@ -85,7 +85,7 @@ class SecurityConfiguration {
         return u;
     }
 
-   // @Bean
+//    @Bean
     OAuth2TokenCustomizer<JwtEncodingContext> jwtEncodingContextOAuth2TokenCustomizer() {
         return context -> {
             var isAdmin = context.getPrincipal().getAuthorities()
