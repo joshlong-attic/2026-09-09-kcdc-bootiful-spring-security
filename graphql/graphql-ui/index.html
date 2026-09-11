@@ -1,0 +1,32 @@
+<html>
+<head>
+	<title> GraphQL Client </title>
+</head>
+<body>
+
+<div id = "m"></div>
+
+<script type="module">
+import { request, gql } from 'https://esm.sh/graphql-request';
+
+addEventListener('load' , async e => {
+ 
+  const messageDiv = document.getElementById ('m')
+  const uri = location.origin + '/api/graphql'
+  const csrf = document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1]
+  try {
+  	const data = await request({
+  		url: uri,
+  		document: gql`{message{message}}`,
+  		requestHeaders: { 'X-XSRF-TOKEN': decodeURIComponent(csrf ?? '') }
+  	})
+  	messageDiv.textContent = data.message.message
+  } catch (err) {
+	messageDiv.textContent = 'Error: ' + err.message
+  }
+
+})
+</script>
+
+</body>
+</html>

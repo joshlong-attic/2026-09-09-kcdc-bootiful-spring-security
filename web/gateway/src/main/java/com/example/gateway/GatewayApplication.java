@@ -7,7 +7,10 @@ import org.springframework.cloud.gateway.server.mvc.filter.TokenRelayFilterFunct
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.web.servlet.function.RequestPredicate;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.servlet.function.RequestPredicates;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
@@ -26,7 +29,7 @@ public class GatewayApplication {
     @Bean
     RouterFunction<ServerResponse> ui() {
         return route()
-                .route(RequestPredicates.path("/**"), http())
+                .route(RequestPredicates.path("/**").and(RequestPredicates.path("/error").negate()), http())
                 .before(BeforeFilterFunctions.uri("http://localhost:8020"))
                 .build();
     }
@@ -37,8 +40,20 @@ public class GatewayApplication {
         return route()
                 .route(RequestPredicates.path("/api/**"), http())
                 .before(BeforeFilterFunctions.uri("http://localhost:8081"))
-                .before(BeforeFilterFunctions.rewritePath("/api", "/"))
+                .before(BeforeFilterFunctions.rewritePath("/api/(?<segment>.*)", "/${segment}"))
                 .filter(TokenRelayFilterFunctions.tokenRelay())
                 .build();
     }
+
+    @Bean
+    Customizer<HttpSecurity> httpSecurityCustomizer() throws Exception {
+        return http -> {
+            var csrfHandler = new CsrfTokenRequestAttributeHandler();
+            csrfHandler.setCsrfRequestAttributeName(null); // eager load, so the cookie actually gets written
+            http.csrf(c -> c
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .csrfTokenRequestHandler(csrfHandler));
+        };
+    }
+
 }
