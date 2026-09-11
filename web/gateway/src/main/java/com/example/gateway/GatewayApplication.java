@@ -28,7 +28,7 @@ public class GatewayApplication {
     @Bean
     RouterFunction<ServerResponse> ui() {
         return route()
-                .route(RequestPredicates.path("/**").and(RequestPredicates.path("/error").negate()), http())
+                .route(RequestPredicates.path("/**"), http())
                 .before(BeforeFilterFunctions.uri("http://localhost:8020"))
                 .build();
     }
@@ -49,17 +49,6 @@ public class GatewayApplication {
         return http -> http.csrf(AbstractHttpConfigurer::disable);
     }
 
-  /*  @Bean
-    Customizer<HttpSecurity> httpSecurityCustomizer() throws Exception {
-        return http -> {
-            var csrfHandler = new CsrfTokenRequestAttributeHandler();
-            csrfHandler.setCsrfRequestAttributeName(null); // eager load, so the cookie actually gets written
-            http.csrf(c -> c
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .csrfTokenRequestHandler(csrfHandler));
-        };
-       }
-    */
 
 
 }

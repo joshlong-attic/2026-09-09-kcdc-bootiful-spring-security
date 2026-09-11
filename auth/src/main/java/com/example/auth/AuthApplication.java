@@ -4,6 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.authorization.AuthorizationManagerFactories;
 import org.springframework.security.authorization.RequiredFactor;
@@ -49,7 +51,6 @@ class SecurityConfiguration {
             var isAdmin = context.getPrincipal().getAuthorities()
                     .stream().anyMatch(ga -> {
                         var authority = ga.getAuthority();
-                        IO.println( context.getPrincipal().getName() +" :: "+ authority);
                         return Objects
                                 .requireNonNull(authority).contains("ROLE_ADMIN");
                     });
@@ -58,15 +59,14 @@ class SecurityConfiguration {
     }
 
     @Bean
-    Customizer<HttpSecurity> authServerConfiguration() {
-        return security -> security
-                .oauth2AuthorizationServer(a -> a
-                        .oidc(Customizer.withDefaults())
-                        // NOTE: required for Shell
-                        .deviceAuthorizationEndpoint(Customizer.withDefaults())
-                        .deviceVerificationEndpoint(Customizer.withDefaults())
-                );
+    Customizer<HttpSecurity> authServerConfig() {
+        return http -> http.oauth2AuthorizationServer(a -> a
+                .oidc(Customizer.withDefaults())
+                .deviceAuthorizationEndpoint(Customizer.withDefaults())
+                .deviceVerificationEndpoint(Customizer.withDefaults())
+        );
     }
+
 
 
     // @Bean
@@ -106,15 +106,3 @@ class DeviceActivatedController {
     }
 
 }
-
-//
-//@Controller
-//@ResponseBody
-//class MeController {
-//
-//    @GetMapping("/")
-//    Map<String, String> me(Principal principal) {
-//        return Map.of("name", principal.getName());
-//    }
-//
-//}

@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
-@EnableMethodSecurity(securedEnabled = true)
+@EnableMethodSecurity //(securedEnabled = true)
 @SpringBootApplication
 public class GraphqlResourceApplication {
 
