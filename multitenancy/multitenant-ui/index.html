@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Customers</title>
+    <style>
+        #m {
+            display: grid;
+            grid-template-columns: auto 2fr ;
+            grid-column-gap: 1em;
+        }
+
+        .customer {
+            display: grid;
+            grid-column: 1 / -1;
+            grid-template-columns: subgrid;
+            border-top: 1px solid;
+        }
+    </style>
+</head>
+<body>
+<template id="row">
+    <div class="customer">
+        <div class="id"></div>
+        <div class="name"></div>
+    </div>
+</template>
+
+<div id="m"></div>
+
+<script type="module">
+    // <.>
+    const response = await fetch('/api/customers')
+    const customers = await response.json()
+    m.append(...customers.map(({id, name}) => {
+        const customer = row.content.cloneNode(true)
+        customer.querySelector('.id').textContent = id
+        customer.querySelector('.name').textContent = name
+        return customer
+    }))
+</script>
+</body>
+</html>

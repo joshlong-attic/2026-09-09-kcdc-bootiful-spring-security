@@ -1,12 +1,12 @@
 package com.example.auth;
 
+import io.arconia.multitenancy.details.jdbc.JdbcTenantDetailsService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.security.authorization.AuthorizationManagerFactories;
 import org.springframework.security.authorization.RequiredFactor;
 import org.springframework.security.config.Customizer;
@@ -29,6 +29,46 @@ public class AuthApplication {
         SpringApplication.run(AuthApplication.class, args);
     }
 
+}
+
+class TenantOAuth2TokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
+
+    private final JdbcClient db;
+
+    TenantOAuth2TokenCustomizer(JdbcClient db) {
+        this.db = db;
+    }
+
+    @Override
+    public void customize(JwtEncodingContext context) {
+        var tenant = db
+                .sql("""
+                           select tenant_details_identifier from 
+                           users_tenant_details utd  where users_username = ? 
+                        """)
+                .params(context.getPrincipal().getName())
+                .query((rs, rowNum) -> rs.getString("tenant_details_identifier"))
+                .single();
+        IO.println("the tenant is "  + tenant);
+        context.getClaims().claim("tenant_id", tenant);
+    }
+}
+
+@Configuration
+class MultitenancyConfiguration {
+    
+    @Bean
+    TenantOAuth2TokenCustomizer tenantOAuth2TokenCustomizer(JdbcClient jdbcClient) {
+        return new TenantOAuth2TokenCustomizer(jdbcClient);
+    }
+
+    @Bean
+    JdbcTenantDetailsService jdbcTenantDetails(DataSource dataSource) {
+        return JdbcTenantDetailsService
+                .builder()
+                .dataSource(dataSource)
+                .build();
+    }
 }
 
 @Configuration
@@ -66,8 +106,6 @@ class SecurityConfiguration {
                 .deviceVerificationEndpoint(Customizer.withDefaults())
         );
     }
-
-
 
     // @Bean
     Customizer<HttpSecurity> securityCustomizer() {
