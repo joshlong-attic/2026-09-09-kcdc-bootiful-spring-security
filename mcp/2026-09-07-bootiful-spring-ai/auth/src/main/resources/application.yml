@@ -1,0 +1,33 @@
+spring:
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    password: secret
+    username: myuser
+    url: jdbc:postgresql://localhost/mydatabase
+  security:
+    oauth2:
+      authorizationserver:
+        client:
+          spring:
+            registration:
+              client-id: "spring"
+              client-secret: "{noop}spring"
+              client-authentication-methods:
+                - "client_secret_basic"
+              authorization-grant-types:
+                - "authorization_code"
+                - "client_credentials"
+                - "refresh_token"
+                - "urn:ietf:params:oauth:grant-type:device_code"
+              redirect-uris:
+                - "http://127.0.0.1:8080/login/oauth2/code/spring"
+              scopes:
+                - "openid"
+                - "profile"
+                - "message"
+  application:
+    name: auth
+server:
+  port: 9090

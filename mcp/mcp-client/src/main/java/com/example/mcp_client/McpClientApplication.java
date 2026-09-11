@@ -4,10 +4,15 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.service.annotation.GetExchange;
+
+import static org.springaicommunity.mcp.security.client.sync.config.McpClientOAuth2Configurer.mcpClientOAuth2;
 
 @SpringBootApplication
 public class McpClientApplication {
@@ -16,8 +21,12 @@ public class McpClientApplication {
         SpringApplication.run(McpClientApplication.class, args);
     }
 
-}
+    @Bean
+    Customizer<HttpSecurity> customizer() {
+        return http -> http.with(mcpClientOAuth2());
+    }
 
+}
 
 
 @Controller
@@ -26,8 +35,8 @@ class AssistantController {
 
     private final ChatClient chatClient;
 
-    AssistantController( 
-            ToolCallbackProvider toolCallbackProvider ,
+    AssistantController(
+            ToolCallbackProvider toolCallbackProvider,
             ChatClient.Builder chatClient) {
         this.chatClient = chatClient
                 .defaultTools(toolCallbackProvider)
