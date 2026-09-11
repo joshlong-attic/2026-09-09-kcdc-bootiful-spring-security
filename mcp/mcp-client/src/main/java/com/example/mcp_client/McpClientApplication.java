@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.service.annotation.GetExchange;
 
 import static org.springaicommunity.mcp.security.client.sync.config.McpClientOAuth2Configurer.mcpClientOAuth2;
 
@@ -54,7 +54,7 @@ class AssistantController {
                 .build();
     }
 
-    @GetExchange("/ask")
+    @GetMapping({"/ask", "/api/ask"})
     String ask(@RequestParam String question) {
         return this.chatClient.prompt()
                 .user(question)
