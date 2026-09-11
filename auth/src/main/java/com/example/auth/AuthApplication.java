@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.sql.DataSource;
 import java.time.Duration;
+import java.util.Objects;
 
 @SpringBootApplication
 public class AuthApplication {
@@ -44,7 +45,16 @@ class SecurityConfiguration {
 
     @Bean
     OAuth2TokenCustomizer<JwtEncodingContext> jwtEncodingContextOAuth2TokenCustomizer() {
-        return context -> context.getClaims().claim("admin", true);
+        return context -> {
+            var isAdmin = context.getPrincipal().getAuthorities()
+                    .stream().anyMatch(ga -> {
+                        var authority = ga.getAuthority();
+                        IO.println( context.getPrincipal().getName() +" :: "+ authority);
+                        return Objects
+                                .requireNonNull(authority).contains("ROLE_ADMIN");
+                    });
+            context.getClaims().claim("admin", isAdmin);
+        };
     }
 
     @Bean

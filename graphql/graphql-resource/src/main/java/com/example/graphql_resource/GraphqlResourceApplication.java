@@ -22,7 +22,7 @@ public class GraphqlResourceApplication {
 class MessageController {
 
     // or @PreAuthorize( "hasRole('SCOPE_openid')") since we're in a resource server
-    @PreAuthorize("principal?.claims?.admin  ")
+    @PreAuthorize("principal?.claims?.['admin']  ")
     @QueryMapping
     Message message() {
         var name = SecurityContextHolder
