@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; }
+  textarea { width: 100%; min-height: 6rem; font: inherit; padding: .5rem; box-sizing: border-box; }
+  button { font: inherit; margin-top: .5rem; padding: .5rem 1rem; }
+  #answer { margin-top: 1rem; padding: 1rem; border: 1px solid #ccc; border-radius: 4px; white-space: pre-wrap; min-height: 2rem; }
+</style>
+</head>
+<body>
+
+<h1>Ask</h1>
+
+<textarea id="question" placeholder="Ask a question..."></textarea>
+<button id="ask">Ask</button>
+
+<div id="answer"></div>
+
+<script>
+  const questionEl = document.getElementById('question');
+  const answerEl = document.getElementById('answer');
+  const askEl = document.getElementById('ask');
+
+  async function ask() {
+    const question = questionEl.value.trim();
+    if (!question) return;
+
+    askEl.disabled = true;
+    answerEl.textContent = 'Thinking...';
+
+    try {
+      const response = await fetch('/api/ask?question=' + encodeURIComponent(question));
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      answerEl.textContent = await response.text();
+    } catch (e) {
+      answerEl.textContent = 'Error: ' + e.message;
+    } finally {
+      askEl.disabled = false;
+    }
+  }
+
+  askEl.addEventListener('click', ask);
+  questionEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) ask();
+  });
+</script>
+
+</body>
+</html>
