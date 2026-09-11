@@ -1,22 +1,16 @@
 package com.example.amqp_resource;
 
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.integration.amqp.dsl.Amqp;
-import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.core.GenericHandler;
 import org.springframework.integration.dsl.DirectChannelSpec;
 import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.MessageChannelSpec;
 import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authorization.AuthenticatedAuthorizationManager;

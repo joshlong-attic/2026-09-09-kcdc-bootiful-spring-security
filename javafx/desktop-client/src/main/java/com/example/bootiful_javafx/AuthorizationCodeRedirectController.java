@@ -14,16 +14,16 @@ import java.util.Map;
 @Controller
 class AuthorizationCodeRedirectController {
 
-	private final SystemBrowserOAuth2Login login;
+    private final SystemBrowserOAuth2Login login;
 
-	AuthorizationCodeRedirectController(SystemBrowserOAuth2Login login) {
-		this.login = login;
-	}
+    AuthorizationCodeRedirectController(SystemBrowserOAuth2Login login) {
+        this.login = login;
+    }
 
-	@GetMapping("/login/oauth2/code/{registrationId}")
-	String signedIn(@PathVariable String registrationId, @RequestParam Map<String, String> parameters, Model model) {
-		model.addAttribute("name", this.login.finish(registrationId, parameters).name());
-		return "signed-in";
-	}
+    @GetMapping("/login/oauth2/code/{registrationId}")
+    String signedIn(@PathVariable String registrationId, @RequestParam Map<String, String> parameters, Model model) {
+        model.addAttribute("name", this.login.finish(registrationId, parameters).name());
+        return "signed-in";
+    }
 
 }

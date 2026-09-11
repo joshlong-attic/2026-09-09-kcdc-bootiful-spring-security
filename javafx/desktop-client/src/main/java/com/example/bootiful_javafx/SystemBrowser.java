@@ -5,25 +5,25 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.List;
 
-@Component
-class SystemBrowser implements AuthorizationBrowser {
+interface AuthorizationBrowser {
 
-	@Override
-	public void open(String authorizationRequestUri) {
-		try {
-			var command = List.of("open", authorizationRequestUri);
-			new ProcessBuilder(command)//
-				.start();
-		} //
-		catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    void open(String authorizationRequestUri);
 
 }
 
-interface AuthorizationBrowser {
+@Component
+class SystemBrowser implements AuthorizationBrowser {
 
-	void open(String authorizationRequestUri);
+    @Override
+    public void open(String authorizationRequestUri) {
+        try {
+            var command = List.of("open", authorizationRequestUri);
+            new ProcessBuilder(command)//
+                    .start();
+        } //
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

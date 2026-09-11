@@ -19,28 +19,28 @@ import org.springframework.security.oauth2.client.web.client.support.OAuth2RestC
 import org.springframework.web.service.registry.ImportHttpServices;
 
 @ImportHttpServices(MessageClient.class)
-@SpringBootApplication(exclude = { ServletWebSecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class,
-		UserDetailsServiceAutoConfiguration.class, OAuth2ClientWebSecurityAutoConfiguration.class })
+@SpringBootApplication(exclude = {ServletWebSecurityAutoConfiguration.class, SecurityFilterAutoConfiguration.class,
+        UserDetailsServiceAutoConfiguration.class, OAuth2ClientWebSecurityAutoConfiguration.class})
 public class DesktopApplication {
 
-	public static void main(String[] args) {
-		SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
-		var applicationContext = new SpringApplicationBuilder(DesktopApplication.class).headless(false).run(args);
-		Platform.startup(() -> applicationContext.publishEvent(new StageReadyEvent(new Stage())));
-	}
+    public static void main(String[] args) {
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
+        var applicationContext = new SpringApplicationBuilder(DesktopApplication.class).headless(false).run(args);
+        Platform.startup(() -> applicationContext.publishEvent(new StageReadyEvent(new Stage())));
+    }
 
-	@Bean
-	OAuth2AuthorizedClientManager authorizedClientManager(ClientRegistrationRepository registrations,
-			OAuth2AuthorizedClientService authorizedClients, SystemBrowserOAuth2AuthorizedClientProvider browser) {
-		var manager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(registrations, authorizedClients);
-		manager.setAuthorizedClientProvider(
-				OAuth2AuthorizedClientProviderBuilder.builder().refreshToken().provider(browser).build());
-		return manager;
-	}
+    @Bean
+    OAuth2AuthorizedClientManager authorizedClientManager(ClientRegistrationRepository registrations,
+                                                          OAuth2AuthorizedClientService authorizedClients, SystemBrowserOAuth2AuthorizedClientProvider browser) {
+        var manager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(registrations, authorizedClients);
+        manager.setAuthorizedClientProvider(
+                OAuth2AuthorizedClientProviderBuilder.builder().refreshToken().provider(browser).build());
+        return manager;
+    }
 
-	@Bean
-	OAuth2RestClientHttpServiceGroupConfigurer oauth2RestClientConfigurer(OAuth2AuthorizedClientManager manager) {
-		return OAuth2RestClientHttpServiceGroupConfigurer.from(manager);
-	}
+    @Bean
+    OAuth2RestClientHttpServiceGroupConfigurer oauth2RestClientConfigurer(OAuth2AuthorizedClientManager manager) {
+        return OAuth2RestClientHttpServiceGroupConfigurer.from(manager);
+    }
 
 }

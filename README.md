@@ -61,8 +61,9 @@
 * Desktop + PKCE + JavaFX
 
 ## part 1
+
 * start.spring.io
-* auth(entication,orization)
+* auth (entication,orization)
 * `MeController`
 * default user/pw
 * AuthenticationManager hierarchy
@@ -85,17 +86,18 @@
 * MFA duration
 * nice.. but its all in one place. real systems have many moving parts.
 * why OAuth
-  * brief interlude to talk about yelp.com having required folks to enter their gmail username/password to promote the socialization / gamification of reviews ~16 years ago
+    * brief interlude to talk about yelp.com having required folks to enter their gmail username/password to promote the
+      socialization / gamification of reviews ~16 years ago
 * delegated authoirzation, _but_ people started doing authentication with it
 * enter: OIDC
 * Spring Auth Server: central place to vend and validate tokens
 * setup OAuth client
 * setup OAuth client programatically
 * oauth client (http)
-  * RestClient + header
-  * RestClient + interceptor && attributes
-  * declarative interface client http service thingamabobber
-  * `OAuth*GroupConfigurer`
+    * RestClient + header
+    * RestClient + interceptor && attributes
+    * declarative interface client http service thingamabobber
+    * `OAuth*GroupConfigurer`
 * resource server (http)
 * gateway - oauth client
 * `ui/index.html`
@@ -103,10 +105,11 @@
 
 ## part 2: protocol parade
 
-
 - [ ] multitenancy w/ Arconia + OAuth
-- [x] Messaging (AMQP + Spring Integration) (make sure to add `spring-security-messaging`). ask rob if we can add that custom interceptor class to Spring Security
+- [x] Messaging (AMQP + Spring Integration) (make sure to add `spring-security-messaging`). ask rob if we can add that
+  custom interceptor class to Spring Security
 - [ ] GraphQL + "defense in depth" method security (`@EnableMethodSecurity` vs the old  `@EnableGlobalMethodSecurity`)
+
 * [ ] MCP
 * [ ] gRPC
 * [ ] Spring Shell + Device Code Flow

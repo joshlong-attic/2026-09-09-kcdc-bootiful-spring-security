@@ -4,24 +4,23 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.annotation.ClientRegistrationId;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.web.ClientAttributes;
-import org.springframework.security.oauth2.client.web.client.OAuth2ClientHttpRequestInterceptor;
 import org.springframework.security.oauth2.client.web.client.support.OAuth2RestClientHttpServiceGroupConfigurer;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.registry.ImportHttpServices;
 
-import java.security.Principal;
-import java.util.Map;
+@ClientRegistrationId("messages")
+interface MessageClient {
+
+    @GetExchange("http://localhost:8081/message")
+    Message message();
+}
 
 @SpringBootApplication
 public class WebClientApplication {
@@ -66,13 +65,6 @@ class MessageClientConfiguration {
         return OAuth2RestClientHttpServiceGroupConfigurer
                 .from(acm);
     }
-}
-
-@ClientRegistrationId("messages")
-interface MessageClient {
-
-    @GetExchange("http://localhost:8081/message")
-    Message message();
 }
 
 @Controller

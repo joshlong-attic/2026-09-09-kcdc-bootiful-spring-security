@@ -21,69 +21,69 @@ import java.util.concurrent.CompletableFuture;
 @Component
 class MainView {
 
-	private final MessageClient messages;
+    private final MessageClient messages;
 
-	private final AsyncTaskExecutor executor;
+    private final AsyncTaskExecutor executor;
 
-	private Label greeting;
+    private Label greeting;
 
-	private Button call;
+    private Button call;
 
-	private TextArea output;
+    private TextArea output;
 
-	MainView(MessageClient messages, AsyncTaskExecutor applicationTaskExecutor) {
-		this.messages = messages;
-		this.executor = applicationTaskExecutor;
-	}
+    MainView(MessageClient messages, AsyncTaskExecutor applicationTaskExecutor) {
+        this.messages = messages;
+        this.executor = applicationTaskExecutor;
+    }
 
-	// three controls, and the whole demo: who are you, and what did the API say?
-	@EventListener
-	void on(StageReadyEvent event) {
-		this.greeting = new Label("Nobody is signed in.");
-		this.greeting.getStyleClass().add("greeting");
+    // three controls, and the whole demo: who are you, and what did the API say?
+    @EventListener
+    void on(StageReadyEvent event) {
+        this.greeting = new Label("Nobody is signed in.");
+        this.greeting.getStyleClass().add("greeting");
 
-		this.call = new Button("Call the API");
-		this.call.setDefaultButton(true);
-		this.call.setOnAction(_ -> call());
+        this.call = new Button("Call the API");
+        this.call.setDefaultButton(true);
+        this.call.setOnAction(_ -> call());
 
-		this.output = new TextArea();
-		this.output.setEditable(false);
+        this.output = new TextArea();
+        this.output.setEditable(false);
 
-		var layout = new VBox(16, this.greeting, this.call, this.output);
-		layout.setAlignment(Pos.CENTER);
-		layout.setPadding(new Insets(32));
+        var layout = new VBox(16, this.greeting, this.call, this.output);
+        layout.setAlignment(Pos.CENTER);
+        layout.setPadding(new Insets(32));
 
-		var scene = new Scene(layout, 560, 320);
-		scene.getStylesheets().add("/styles.css");
+        var scene = new Scene(layout, 560, 320);
+        scene.getStylesheets().add("/styles.css");
 
-		var stage = event.stage();
-		stage.setTitle("Bootiful JavaFX");
-		stage.setScene(scene);
-		stage.setOnHidden(_ -> System.exit(0));
-		stage.show();
-	}
+        var stage = event.stage();
+        stage.setTitle("Bootiful JavaFX");
+        stage.setScene(scene);
+        stage.setOnHidden(_ -> System.exit(0));
+        stage.show();
+    }
 
-	// there is no sign-in button: the call needs a token, so Spring
-	// Security goes and gets one. The work runs on one of Spring Boot's
-	// virtual threads and the result lands back on the JavaFX application
-	// thread, because `Platform::runLater` *is* an `Executor`.
-	private void call() {
-		this.call.setDisable(true);
-		this.output.setText("Calling http://localhost:8081/message ...");
-		CompletableFuture.supplyAsync(this.messages::message, this.executor)
-			.handleAsync((message, failure) -> done(message, failure), Platform::runLater);
-	}
+    // there is no sign-in button: the call needs a token, so Spring
+    // Security goes and gets one. The work runs on one of Spring Boot's
+    // virtual threads and the result lands back on the JavaFX application
+    // thread, because `Platform::runLater` *is* an `Executor`.
+    private void call() {
+        this.call.setDisable(true);
+        this.output.setText("Calling http://localhost:8081/message ...");
+        CompletableFuture.supplyAsync(this.messages::message, this.executor)
+                .handleAsync((message, failure) -> done(message, failure), Platform::runLater);
+    }
 
-	private Void done(Message message, Throwable failure) {
-		this.output.setText(
-				failure == null ? message.message() : NestedExceptionUtils.getMostSpecificCause(failure).getMessage());
-		this.call.setDisable(false);
-		return null;
-	}
+    private Void done(Message message, Throwable failure) {
+        this.output.setText(
+                failure == null ? message.message() : NestedExceptionUtils.getMostSpecificCause(failure).getMessage());
+        this.call.setDisable(false);
+        return null;
+    }
 
-	@EventListener
-	void on(UserSignedInEvent event) {
-		Platform.runLater(() -> this.greeting.setText("Hello, " + event.name() + "."));
-	}
+    @EventListener
+    void on(UserSignedInEvent event) {
+        Platform.runLater(() -> this.greeting.setText("Hello, " + event.name() + "."));
+    }
 
 }

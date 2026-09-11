@@ -16,35 +16,34 @@ import java.util.concurrent.TimeUnit;
 @Component
 class SystemBrowserOAuth2AuthorizedClientProvider implements OAuth2AuthorizedClientProvider {
 
-	private static final Duration TIMEOUT = Duration.ofMinutes(2);
+    private static final Duration TIMEOUT = Duration.ofMinutes(2);
 
-	private static final Duration CLOCK_SKEW = Duration.ofSeconds(60);
+    private static final Duration CLOCK_SKEW = Duration.ofSeconds(60);
 
-	private final SystemBrowserOAuth2Login login;
+    private final SystemBrowserOAuth2Login login;
 
-	SystemBrowserOAuth2AuthorizedClientProvider(SystemBrowserOAuth2Login login) {
-		this.login = login;
-	}
+    SystemBrowserOAuth2AuthorizedClientProvider(SystemBrowserOAuth2Login login) {
+        this.login = login;
+    }
 
-	@Override
-	public OAuth2AuthorizedClient authorize(OAuth2AuthorizationContext context) {
-		var current = context.getAuthorizedClient();
-		if (current != null && !expired(current.getAccessToken())) {
-			return null; // there is already a good token; nothing for us to do
-		}
-		try {
-			return this.login.start(context.getClientRegistration().getRegistrationId())
-				.orTimeout(TIMEOUT.toSeconds(), TimeUnit.SECONDS)
-				.join();
-		}
-		catch (CompletionException ex) {
-			throw new OAuth2AuthorizationException(new OAuth2Error("browser_login_failed"), ex.getCause());
-		}
-	}
+    private static boolean expired(OAuth2AccessToken token) {
+        var expiresAt = token.getExpiresAt();
+        return expiresAt != null && Instant.now().isAfter(expiresAt.minus(CLOCK_SKEW));
+    }
 
-	private static boolean expired(OAuth2AccessToken token) {
-		var expiresAt = token.getExpiresAt();
-		return expiresAt != null && Instant.now().isAfter(expiresAt.minus(CLOCK_SKEW));
-	}
+    @Override
+    public OAuth2AuthorizedClient authorize(OAuth2AuthorizationContext context) {
+        var current = context.getAuthorizedClient();
+        if (current != null && !expired(current.getAccessToken())) {
+            return null; // there is already a good token; nothing for us to do
+        }
+        try {
+            return this.login.start(context.getClientRegistration().getRegistrationId())
+                    .orTimeout(TIMEOUT.toSeconds(), TimeUnit.SECONDS)
+                    .join();
+        } catch (CompletionException ex) {
+            throw new OAuth2AuthorizationException(new OAuth2Error("browser_login_failed"), ex.getCause());
+        }
+    }
 
 }
